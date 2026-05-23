@@ -7,15 +7,15 @@ import { EmployerModule } from './employer/employer.module';
 import { CityModule } from './city/city.module';
 import { PaymentModule } from './payment/payment.module';
 
-// Импорт сущностей (будут созданы далее)
-import { User } from './user/user.entity';
-import { Candidate } from './candidate/candidate.entity';
-import { Employer } from './employer/employer.entity';
-import { City } from './city/city.entity';
-import { Education } from './candidate/education.entity';
-import { WorkExperience } from './candidate/work-experience.entity';
-import { DriverInfo } from './candidate/driver-info.entity';
-import { Transaction } from './payment/transaction.entity';
+// Импорт сущностей
+import { User } from './user/entities/user.entity';
+import { CandidateProfile } from './candidate/entities/candidate-profile.entity';
+import { EmployerProfile } from './employer/entities/employer-profile.entity';
+import { City } from './city/entities/city.entity';
+import { Education } from './candidate/entities/education.entity';
+import { WorkExperience } from './candidate/entities/work-experience.entity';
+import { DriverInfo } from './candidate/entities/driver-info.entity';
+import { Transaction, ProfileView } from './payment/entities/payment.entity';
 
 @Module({
   imports: [
@@ -34,13 +34,14 @@ import { Transaction } from './payment/transaction.entity';
         database: configService.get('DB_NAME', 'job_platform'),
         entities: [
           User,
-          Candidate,
-          Employer,
+          CandidateProfile,
+          EmployerProfile,
           City,
           Education,
           WorkExperience,
           DriverInfo,
           Transaction,
+          ProfileView,
         ],
         synchronize: configService.get('NODE_ENV') !== 'production',
         logging: configService.get('NODE_ENV') === 'development',
