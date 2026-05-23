@@ -3,9 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { User, UserRole } from '../user/user.entity';
-import { Candidate } from '../candidate/candidate.entity';
-import { Employer } from '../employer/employer.entity';
+import { User, UserRole } from '../user/entities/user.entity';
+import { CandidateProfile } from '../candidate/entities/candidate-profile.entity';
+import { EmployerProfile } from '../employer/entities/employer-profile.entity';
 
 export interface RegisterDto {
   email?: string;
@@ -25,10 +25,10 @@ export class AuthService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    @InjectRepository(Candidate)
-    private candidateRepository: Repository<Candidate>,
-    @InjectRepository(Employer)
-    private employerRepository: Repository<Employer>,
+    @InjectRepository(CandidateProfile)
+    private candidateRepository: Repository<CandidateProfile>,
+    @InjectRepository(EmployerProfile)
+    private employerRepository: Repository<EmployerProfile>,
     private jwtService: JwtService,
   ) {}
 
@@ -49,18 +49,18 @@ export class AuthService {
     const user = this.userRepository.create({
       email: dto.email,
       phone: dto.phone,
-      passwordHash,
+      password_hash: passwordHash,
       role: dto.role,
-      isVerified: false,
+      is_verified: false,
     });
 
     await this.userRepository.save(user);
 
     // Создаем профиль в зависимости от роли
     if (dto.role === UserRole.CANDIDATE) {
-      await this.candidateRepository.save({ userId: user.id });
+      await this.candidateRepository.save({ user });
     } else {
-      await this.employerRepository.save({ userId: user.id });
+      await this.employerRepository.save({ user });
     }
 
     return this.generateToken(user);
@@ -72,14 +72,13 @@ export class AuthService {
         dto.email ? { email: dto.email } : {},
         dto.phone ? { phone: dto.phone } : {},
       ].filter(Boolean),
-      relations: ['candidate', 'employer'],
     });
 
-    if (!user || !user.passwordHash) {
+    if (!user || !user.password_hash) {
       throw new UnauthorizedException('Неверный логин или пароль');
     }
 
-    const isValid = await bcrypt.compare(dto.password, user.passwordHash);
+    const isValid = await bcrypt.compare(dto.password, user.password_hash);
     if (!isValid) {
       throw new UnauthorizedException('Неверный логин или пароль');
     }
