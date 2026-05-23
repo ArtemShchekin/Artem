@@ -9,7 +9,7 @@ export class GetPopularCitiesDto {
 export class SearchCitiesDto {
   @IsString()
   @MinLength(2)
-  q: string;
+  q!: string;
 
   @IsOptional()
   @IsString()

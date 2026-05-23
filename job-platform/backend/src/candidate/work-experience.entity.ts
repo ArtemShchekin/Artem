@@ -5,36 +5,39 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Candidate } from './candidate.entity';
+import { CandidateProfile } from './candidate-profile.entity';
 
 @Entity('work_experiences')
 export class WorkExperience {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @ManyToOne(() => Candidate, (candidate) => candidate.workExperiences, { onDelete: 'CASCADE' })
+  @ManyToOne(() => CandidateProfile, (candidate) => candidate.workExperiences, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'candidate_id' })
-  candidate: Candidate;
+  candidate: CandidateProfile;
 
   @Column()
+  candidateId: string;
+
+  @Column({ name: 'company_name' })
   companyName: string;
 
   @Column()
   position: string;
 
-  @Column()
+  @Column({ name: 'start_month' })
   startMonth: number;
 
-  @Column()
+  @Column({ name: 'start_year' })
   startYear: number;
 
-  @Column({ nullable: true })
+  @Column({ name: 'end_month', nullable: true })
   endMonth?: number;
 
-  @Column({ nullable: true })
+  @Column({ name: 'end_year', nullable: true })
   endYear?: number;
 
-  @Column({ default: false })
+  @Column({ name: 'is_current_job', default: false })
   isCurrentJob: boolean;
 
   @Column({ type: 'text', nullable: true })

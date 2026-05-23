@@ -1,11 +1,12 @@
 import {
   Entity,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
   OneToOne,
   JoinColumn,
+  ManyToOne,
   OneToMany,
 } from 'typeorm';
 import { User } from '../user/user.entity';
@@ -18,54 +19,44 @@ export enum CandidateStatus {
   NOT_LOOKING = 'not_looking',
 }
 
-@Entity('candidates')
-export class Candidate {
-  @PrimaryColumn('uuid')
-  userId: string;
+@Entity('candidate_profiles')
+export class CandidateProfile {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @OneToOne(() => User, (user) => user.candidate)
-  @JoinColumn()
+  @ManyToOne(() => User, (user) => user.id, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @Column()
+  userId: string;
+
+  @Column({ name: 'first_name' })
   firstName: string;
 
-  @Column()
+  @Column({ name: 'last_name' })
   lastName: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'middle_name', nullable: true })
   middleName?: string;
 
-  @Column({ type: 'date' })
+  @Column({ name: 'birth_date' })
   birthDate: Date;
 
-  @Column({
-    type: 'enum',
-    enum: CandidateStatus,
-    default: CandidateStatus.NOT_LOOKING,
-  })
+  @Column({ type: 'enum', enum: CandidateStatus, default: CandidateStatus.NOT_LOOKING })
   status: CandidateStatus;
 
-  @Column({ nullable: true })
-  cityId?: number;
+  @Column({ name: 'city_id', nullable: true })
+  cityId?: string;
 
-  @Column({ default: false })
+  @Column({ name: 'contacts_hidden', default: false })
   contactsHidden: boolean;
 
-  @Column({ nullable: true })
-  phone?: string;
+  @CreateDateColumn()
+  createdAt: Date;
 
-  @Column({ nullable: true })
-  telegram?: string;
-
-  @Column({ nullable: true })
-  whatsapp?: string;
-
-  @Column({ nullable: true })
-  viber?: string;
-
-  @Column({ nullable: true })
-  email?: string;
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @OneToMany(() => Education, (education) => education.candidate, { cascade: true })
   educations: Education[];
@@ -73,12 +64,7 @@ export class Candidate {
   @OneToMany(() => WorkExperience, (experience) => experience.candidate, { cascade: true })
   workExperiences: WorkExperience[];
 
-  @OneToOne(() => DriverInfo, (driverInfo) => driverInfo.candidate, { cascade: true })
+  @OneToOne(() => DriverInfo, (driverInfo) => driverInfo.candidate, { cascade: true, nullable: true })
+  @JoinColumn({ name: 'driver_info_id' })
   driverInfo?: DriverInfo;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }

@@ -6,7 +6,7 @@ import {
   JoinColumn,
   CreateDateColumn,
 } from 'typeorm';
-import { Employer } from '../employer/employer.entity';
+import { EmployerProfile } from '../employer/employer-profile.entity';
 
 export enum TransactionStatus {
   PENDING = 'pending',
@@ -14,14 +14,22 @@ export enum TransactionStatus {
   FAILED = 'failed',
 }
 
+export enum TransactionType {
+  TOPUP = 'topup',
+  UNLOCK = 'unlock',
+}
+
 @Entity('transactions')
 export class Transaction {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @ManyToOne(() => Employer, { onDelete: 'CASCADE' })
+  @ManyToOne(() => EmployerProfile, (employer) => employer.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'employer_id' })
-  employer: Employer;
+  employer: EmployerProfile;
+
+  @Column()
+  employerId: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   amount: number;
@@ -29,21 +37,14 @@ export class Transaction {
   @Column({ default: 'USD' })
   currency: string;
 
-  @Column({
-    type: 'enum',
-    enum: TransactionStatus,
-    default: TransactionStatus.PENDING,
-  })
+  @Column({ type: 'enum', enum: TransactionStatus, default: TransactionStatus.PENDING })
   status: TransactionStatus;
 
-  @Column({ nullable: true })
+  @Column({ name: 'payment_method_token', nullable: true })
   paymentMethodToken?: string;
 
-  @Column({ nullable: true })
-  type: string; // 'topup' или 'unlock'
-
-  @Column({ nullable: true })
-  candidateId?: string; // Для разблокировки профиля
+  @Column({ type: 'enum', enum: TransactionType })
+  type: TransactionType;
 
   @CreateDateColumn()
   createdAt: Date;

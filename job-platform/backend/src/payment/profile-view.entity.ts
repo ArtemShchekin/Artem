@@ -1,23 +1,24 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
-import { Candidate } from '../candidate/candidate.entity';
-import { Employer } from '../employer/employer.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+} from 'typeorm';
 
 @Entity('profile_views')
 export class ProfileView {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @ManyToOne(() => Employer, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'viewer_id' })
-  viewer: Employer;
+  @Column({ name: 'viewer_id' })
+  viewerId: string; // Employer user ID
 
-  @ManyToOne(() => Candidate, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'candidate_id' })
-  candidate: Candidate;
+  @Column({ name: 'candidate_id' })
+  candidateId: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+  @Column({ name: 'paid_amount', type: 'decimal', precision: 10, scale: 2, nullable: true })
   paidAmount?: number;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'unlocked_at' })
   unlockedAt: Date;
 }
