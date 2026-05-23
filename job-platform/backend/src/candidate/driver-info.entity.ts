@@ -5,7 +5,7 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
-import { Candidate } from './candidate.entity';
+import { CandidateProfile } from './candidate-profile.entity';
 
 export enum LicenseCategory {
   A = 'A',
@@ -22,21 +22,19 @@ export enum LicenseCategory {
 
 @Entity('driver_info')
 export class DriverInfo {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @OneToOne(() => Candidate, (candidate) => candidate.driverInfo, { onDelete: 'CASCADE' })
+  @OneToOne(() => CandidateProfile, (candidate) => candidate.driverInfo, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'candidate_id' })
-  candidate: Candidate;
+  candidate: CandidateProfile;
 
-  @Column({ default: false })
+  @Column()
+  candidateId: string;
+
+  @Column({ name: 'has_own_car', default: false })
   hasOwnCar: boolean;
 
-  @Column({
-    type: 'enum',
-    enum: LicenseCategory,
-    array: true,
-    default: [],
-  })
-  licenseCategories: LicenseCategory[];
+  @Column({ type: 'simple-array', nullable: true })
+  licenseCategories?: LicenseCategory[];
 }

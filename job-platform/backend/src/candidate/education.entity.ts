@@ -5,7 +5,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Candidate } from './candidate.entity';
+import { CandidateProfile } from './candidate-profile.entity';
 
 export enum EducationLevel {
   SECONDARY = 'secondary',
@@ -20,17 +20,20 @@ export enum EducationLevel {
 
 @Entity('education')
 export class Education {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @ManyToOne(() => Candidate, (candidate) => candidate.educations, { onDelete: 'CASCADE' })
+  @ManyToOne(() => CandidateProfile, (candidate) => candidate.educations, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'candidate_id' })
-  candidate: Candidate;
+  candidate: CandidateProfile;
+
+  @Column()
+  candidateId: string;
 
   @Column({ type: 'enum', enum: EducationLevel })
   level: EducationLevel;
 
-  @Column()
+  @Column({ name: 'institution_name' })
   institutionName: string;
 
   @Column({ nullable: true })
@@ -39,6 +42,6 @@ export class Education {
   @Column({ nullable: true })
   specialization?: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'graduation_code', nullable: true })
   graduationCode?: string;
 }

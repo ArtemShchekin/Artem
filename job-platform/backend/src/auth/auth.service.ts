@@ -3,9 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { User, UserRole } from '../user/entities/user.entity';
-import { CandidateProfile } from '../candidate/entities/candidate-profile.entity';
-import { EmployerProfile } from '../employer/entities/employer-profile.entity';
+import { User, UserRole } from '../user/user.entity';
+import { CandidateProfile } from '../candidate/candidate-profile.entity';
+import { EmployerProfile } from '../employer/employer-profile.entity';
 
 export interface RegisterDto {
   email?: string;
@@ -49,18 +49,18 @@ export class AuthService {
     const user = this.userRepository.create({
       email: dto.email,
       phone: dto.phone,
-      password_hash: passwordHash,
+      passwordHash: passwordHash,
       role: dto.role,
-      is_verified: false,
+      isVerified: false,
     });
 
     await this.userRepository.save(user);
 
     // Создаем профиль в зависимости от роли
     if (dto.role === UserRole.CANDIDATE) {
-      await this.candidateRepository.save({ user });
+      await this.candidateRepository.save({ userId: user.id });
     } else {
-      await this.employerRepository.save({ user });
+      await this.employerRepository.save({ userId: user.id });
     }
 
     return this.generateToken(user);
@@ -74,11 +74,11 @@ export class AuthService {
       ].filter(Boolean),
     });
 
-    if (!user || !user.password_hash) {
+    if (!user || !user.passwordHash) {
       throw new UnauthorizedException('Неверный логин или пароль');
     }
 
-    const isValid = await bcrypt.compare(dto.password, user.password_hash);
+    const isValid = await bcrypt.compare(dto.password, user.passwordHash);
     if (!isValid) {
       throw new UnauthorizedException('Неверный логин или пароль');
     }
@@ -99,7 +99,7 @@ export class AuthService {
     };
   }
 
-  async validateUser(userId: string): Promise<User> {
+  async validateUser(userId: string): Promise<User | null> {
     return this.userRepository.findOne({ where: { id: userId } });
   }
 }

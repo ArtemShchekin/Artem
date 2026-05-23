@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToOne,
+  JoinColumn,
 } from 'typeorm';
 
 export enum UserRole {
@@ -26,10 +27,7 @@ export class User {
   @Column({ nullable: true })
   passwordHash?: string;
 
-  @Column({
-    type: 'enum',
-    enum: UserRole,
-  })
+  @Column({ type: 'enum', enum: UserRole })
   role: UserRole;
 
   @Column({ default: false })
@@ -40,14 +38,4 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @OneToOne(() => Candidate, (candidate) => candidate.user, { cascade: true })
-  candidate?: Candidate;
-
-  @OneToOne(() => Employer, (employer) => employer.user, { cascade: true })
-  employer?: Employer;
 }
-
-// Импорт после объявления класса для избежания циклических зависимостей
-import { Candidate } from '../candidate/candidate.entity';
-import { Employer } from '../employer/employer.entity';
