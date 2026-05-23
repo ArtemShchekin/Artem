@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgis/postgis:15-3.3
+    container_name: job-platform-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: jobplatform
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:alpine
+    container_name: job-platform-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: job-platform-backend
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/jobplatform
+      REDIS_HOST: redis
+      JWT_SECRET: your-secret-key-change-in-production
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: >
+      sh -c "npm run typeorm migration:run || true && npm run start:prod"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:3000/api
+    container_name: job-platform-frontend
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3000/api
+    ports:
+      - "3001:3000"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
