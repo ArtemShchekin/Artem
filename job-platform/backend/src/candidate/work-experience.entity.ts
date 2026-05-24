@@ -4,32 +4,33 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  CreateDateColumn,
 } from 'typeorm';
 import { CandidateProfile } from './candidate-profile.entity';
 
 @Entity('work_experiences')
 export class WorkExperience {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ManyToOne(() => CandidateProfile, (candidate) => candidate.workExperiences, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'candidate_id' })
-  candidate: CandidateProfile;
+  candidate!: CandidateProfile;
 
   @Column()
-  candidateId: string;
+  candidateId!: string;
 
   @Column({ name: 'company_name' })
-  companyName: string;
+  companyName!: string;
 
   @Column()
-  position: string;
+  position!: string;
 
   @Column({ name: 'start_month' })
-  startMonth: number;
+  startMonth!: number;
 
   @Column({ name: 'start_year' })
-  startYear: number;
+  startYear!: number;
 
   @Column({ name: 'end_month', nullable: true })
   endMonth?: number;
@@ -38,8 +39,11 @@ export class WorkExperience {
   endYear?: number;
 
   @Column({ name: 'is_current_job', default: false })
-  isCurrentJob: boolean;
+  isCurrentJob!: boolean;
 
   @Column({ type: 'text', nullable: true })
   responsibilities?: string;
+
+  @CreateDateColumn()
+  createdAt!: Date;
 }

@@ -4,6 +4,7 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  CreateDateColumn,
 } from 'typeorm';
 import { CandidateProfile } from './candidate-profile.entity';
 
@@ -21,20 +22,20 @@ export enum EducationLevel {
 @Entity('education')
 export class Education {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ManyToOne(() => CandidateProfile, (candidate) => candidate.educations, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'candidate_id' })
-  candidate: CandidateProfile;
+  candidate!: CandidateProfile;
 
   @Column()
-  candidateId: string;
+  candidateId!: string;
 
   @Column({ type: 'enum', enum: EducationLevel })
-  level: EducationLevel;
+  level!: EducationLevel;
 
   @Column({ name: 'institution_name' })
-  institutionName: string;
+  institutionName!: string;
 
   @Column({ nullable: true })
   faculty?: string;
@@ -44,4 +45,7 @@ export class Education {
 
   @Column({ name: 'graduation_code', nullable: true })
   graduationCode?: string;
+
+  @CreateDateColumn()
+  createdAt!: Date;
 }
