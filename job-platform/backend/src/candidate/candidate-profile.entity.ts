@@ -22,47 +22,47 @@ export enum CandidateStatus {
 @Entity('candidate_profiles')
 export class CandidateProfile {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ManyToOne(() => User, (user) => user.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user!: User;
 
   @Column()
-  userId: string;
+  userId!: string;
 
   @Column({ name: 'first_name' })
-  firstName: string;
+  firstName!: string;
 
   @Column({ name: 'last_name' })
-  lastName: string;
+  lastName!: string;
 
   @Column({ name: 'middle_name', nullable: true })
   middleName?: string;
 
   @Column({ name: 'birth_date' })
-  birthDate: Date;
+  birthDate!: Date;
 
   @Column({ type: 'enum', enum: CandidateStatus, default: CandidateStatus.NOT_LOOKING })
-  status: CandidateStatus;
+  status!: CandidateStatus;
 
   @Column({ name: 'city_id', nullable: true })
   cityId?: string;
 
   @Column({ name: 'contacts_hidden', default: false })
-  contactsHidden: boolean;
+  contactsHidden!: boolean;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @OneToMany(() => Education, (education) => education.candidate, { cascade: true })
-  educations: Education[];
+  educations!: Education[];
 
   @OneToMany(() => WorkExperience, (experience) => experience.candidate, { cascade: true })
-  workExperiences: WorkExperience[];
+  workExperiences!: WorkExperience[];
 
   @OneToOne(() => DriverInfo, (driverInfo) => driverInfo.candidate, { cascade: true, nullable: true })
   @JoinColumn({ name: 'driver_info_id' })

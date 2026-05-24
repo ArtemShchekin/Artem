@@ -4,6 +4,7 @@ import {
   Column,
   OneToOne,
   JoinColumn,
+  CreateDateColumn,
 } from 'typeorm';
 import { CandidateProfile } from './candidate-profile.entity';
 
@@ -23,18 +24,21 @@ export enum LicenseCategory {
 @Entity('driver_info')
 export class DriverInfo {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @OneToOne(() => CandidateProfile, (candidate) => candidate.driverInfo, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'candidate_id' })
-  candidate: CandidateProfile;
+  candidate!: CandidateProfile;
 
   @Column()
-  candidateId: string;
+  candidateId!: string;
 
   @Column({ name: 'has_own_car', default: false })
-  hasOwnCar: boolean;
+  hasOwnCar!: boolean;
 
   @Column({ type: 'simple-array', nullable: true })
   licenseCategories?: LicenseCategory[];
+
+  @CreateDateColumn()
+  createdAt!: Date;
 }

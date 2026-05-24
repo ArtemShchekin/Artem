@@ -22,30 +22,30 @@ export enum TransactionType {
 @Entity('transactions')
 export class Transaction {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ManyToOne(() => EmployerProfile, (employer) => employer.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'employer_id' })
-  employer: EmployerProfile;
+  employer!: EmployerProfile;
 
   @Column()
-  employerId: string;
+  employerId!: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
-  amount: number;
+  amount!: number;
 
   @Column({ default: 'USD' })
-  currency: string;
+  currency!: string;
 
   @Column({ type: 'enum', enum: TransactionStatus, default: TransactionStatus.PENDING })
-  status: TransactionStatus;
+  status!: TransactionStatus;
 
   @Column({ name: 'payment_method_token', nullable: true })
   paymentMethodToken?: string;
 
   @Column({ type: 'enum', enum: TransactionType })
-  type: TransactionType;
+  type!: TransactionType;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 }

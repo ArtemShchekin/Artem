@@ -6,13 +6,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { User } from '../user/user.entity';
-import { Candidate } from '../candidate/candidate.entity';
-import { Employer } from '../employer/employer.entity';
+import { CandidateProfile } from '../candidate/candidate-profile.entity';
+import { EmployerProfile } from '../employer/employer-profile.entity';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Candidate, Employer]),
+    TypeOrmModule.forFeature([User, CandidateProfile, EmployerProfile]),
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
